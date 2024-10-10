@@ -32,17 +32,8 @@ def get_enthalpy(pressure):
     return enthalpy_values.get(pressure, None)
 
 # Function to adjust calorific power based on inlet water temperature
-def adjust_calorific_power(temp_water):
-    adjustments = {
-        70: 1.3,   # Increase by 30%
-        80: 1.2,   # Increase by 20%
-        85: 1.1,   # Increase by 10%
-        90: 1.0,   # No adjustment
-        95: 0.9,   # Decrease by 10%
-        100: 0.8,  # Decrease by 20%
-        103: 0.7   # Decrease by 30%
-    }
-    return adjustments.get(temp_water, 1.0)  # Return 1.0 if temperature not in dictionary
+def adjust_calorific_power():
+    return 1.3  # Always return the adjustment for 70°C
 
 # Main function
 def main():
@@ -59,10 +50,6 @@ def main():
         "water_flow": {
             "English": "Makeup Water Flow (kg/h)",
             "Français": "Débit d'eau de makeup (kg/h)"
-        },
-        "temp_water": {
-            "English": "Makeup Water Temperature (°C)",
-            "Français": "Température de l'eau de makeup (°C)"
         },
         "steam_pressure": {
             "English": "Steam Pressure (bar)",
@@ -108,7 +95,6 @@ def main():
 
     # User inputs
     water_flow = st.number_input(labels["water_flow"][lang], min_value=0.0)
-    temp_water = st.selectbox(labels["temp_water"][lang], [70, 80, 85, 90, 95, 100, 103])
     steam_pressure = st.slider(labels["steam_pressure"][lang], 0, 15, 1)
     steam_flow = st.number_input(labels["steam_flow"][lang], min_value=0.0)
 
@@ -130,8 +116,8 @@ def main():
         st.error("Unsupported pressure / Pression non supportée.")
         return
 
-    # Adjust calorific power based on makeup water temperature
-    adjustment = adjust_calorific_power(temp_water)
+    # Adjust calorific power based on makeup water temperature (fixed at 70°C)
+    adjustment = adjust_calorific_power()
     calorific_power = CALORIFIC_POWER[fuel_type] * adjustment
 
     # Calculate the required fuel flow based on enthalpy
@@ -194,3 +180,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
